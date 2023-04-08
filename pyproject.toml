@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "23-1-projeto-sql-an-api-is-born"
+version = "0.1.0"
+description = ""
+authors = ["Lorran Caetano Machado Lopes <lorrancml@al.insper.edu.br>"]
+readme = "README.md"
+packages = [{include = "23_1_projeto_sql_an_api_is_born"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+sqlalchemy = "^2.0.9"
+fastapi = {extras = ["all"], version = "^0.95.0"}
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
