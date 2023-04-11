@@ -1,0 +1,51 @@
+[
+  {
+    "id": 1,
+    "nome": "O Poderoso Chefão",
+    "diretor": "Francis Ford Coppola",
+    "ano_lancamento": 1972,
+    "genero": "Drama"
+  },
+  {
+    "id": 2,
+    "nome": "O Poderoso Chefão II",
+    "diretor": "Francis Ford Coppola",
+    "ano_lancamento": 1974,
+    "genero": "Drama"
+  },
+  {
+    "id": 3,
+    "nome": "O Poderoso Chefão III",
+    "diretor": "Francis Ford Coppola",
+    "ano_lancamento": 1990,
+    "genero": "Drama"
+  },
+  {
+    "id": 5,
+    "nome": "string2",
+    "diretor": "string3",
+    "ano_lancamento": 2002,
+    "genero": "string4"
+  },
+  {
+    "id": 6,
+    "nome": "string3",
+    "diretor": "string3",
+    "ano_lancamento": 20,
+    "genero": "string3"
+  },
+  {
+    "id": 7,
+    "nome": "string4",
+    "diretor": "string4",
+    "ano_lancamento": 2003,
+    "genero": "string4"
+  },
+  {
+    "id": 8,
+    "nome": "pão",
+    "diretor": "é",
+    "ano_lancamento": 2003,
+    "genero": "excêntrico"
+  }
+]
