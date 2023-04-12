@@ -123,5 +123,14 @@ async def create_avaliacao(filme_id: int, avaliacao: Avaliacao):
 # o usuario pode listar as avaliações de filmes
 @app.get("/filmes/{filme_id}/avaliacao")
 async def read_avaliacao(filme_id: int):
-    #retorna todas as avaliacoes do filme com o id especificado (pode ter mais de uma)
-    return [avaliacao for avaliacao in avaliacoes if avaliacao["filme_id"] == filme_id]
+    #retorna todas as avaliacoes do filme com o id especificado (pode ter mais de uma avaliação)
+    filmes = load(open('filmes.json', "r")) #carrega os filmes
+    for filme in filmes: #percorre os filmes
+        if filme.get('id') == filme_id: #verifica se o id do filme é igual ao id do filme passado
+            avaliacoes = load(open('avaliacoes.json', "r")) #carrega as avaliações
+            avaliacoes_filme = [] #cria uma lista para as avaliações do filme
+            for avaliacao in avaliacoes: #percorre as avaliações
+                if avaliacao.get('filme_id') == filme_id: #verifica se o id do filme da avaliacao é igual ao id do filme passado
+                    avaliacoes_filme.append(avaliacao) #adiciona a avaliação na lista de avaliações do filme
+            return avaliacoes_filme #retorna a lista de avaliações do filme
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="O filme não existe na base!") #caso o filme não exista
