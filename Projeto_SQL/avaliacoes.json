@@ -1,14 +1,14 @@
 [
   {
     "id": 1,
-    "avaliacao": 8.5,
-    "comentario": "Excelente filme",
+    "avaliacao": 8.4,
+    "comentario": "Mucho bom",
     "filme_id": 1
   },
   {
     "id": 2,
     "avaliacao": 9.0,
-    "comentario": "Ótimo filme",
+    "comentario": "\u00d3timo filme",
     "filme_id": 2
   },
   {

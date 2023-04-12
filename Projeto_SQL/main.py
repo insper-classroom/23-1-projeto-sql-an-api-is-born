@@ -134,3 +134,23 @@ async def read_avaliacao(filme_id: int):
                     avaliacoes_filme.append(avaliacao) #adiciona a avaliação na lista de avaliações do filme
             return avaliacoes_filme #retorna a lista de avaliações do filme
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="O filme não existe na base!") #caso o filme não exista
+
+
+# o usuario pode alterar os a avaliação de um filme
+@app.put("/filmes/{filme_id}/avaliacao/{avaliacao_id}")
+async def update_filme(filme_id: int, avaliacao: Avaliacao, avaliacao_id: int):
+    filmes = load(open('filmes.json', "r")) #carrega os filmes
+    for film in filmes: #percorre os filmes
+        if film.get('id') == filme_id: #verifica se o id do filme é igual ao id do filme passado
+            avaliacoes = load(open('avaliacoes.json', "r"))  #carrega as avaliações
+            for avali in avaliacoes: #percorre as avaliações
+                if avali.get('id') == avaliacao_id: #verifica se o id da avaliação é igual ao id da avaliação passada
+                    avaliacao = avaliacao.dict() #transforma a avaliação em dicionário
+                    avali['avaliacao'] = avaliacao['avaliacao'] #altera a nota da avaliação
+                    avali['comentario'] = avaliacao['comentario'] #altera o comentario da avaliação
+                    dump(avaliacoes, open('avaliacoes.json', "w", encoding='utf8'), indent = 2) #atualiza o arquivo de avaliações
+                    avaliacoes_alteradas = load(open('avaliacoes.json', "r")) #carrega o arquivo de avaliações
+                    return avaliacoes_alteradas #retorna o arquivo de avaliações
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Não foi achadada a avaliação para ser alterada.")
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Não foi achado o filme.")
+
