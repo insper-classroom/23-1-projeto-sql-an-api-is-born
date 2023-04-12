@@ -105,9 +105,21 @@ async def update_filme(filme_id: int, filme: Filme):
 # usuário pode gerenciar cadastro de avaliações de filmes
 @app.post("/filmes/{filme_id}/avaliacao")
 async def create_avaliacao(filme_id: int, avaliacao: Avaliacao):
-    results = {"filme_id": filme_id, "avaliacao": avaliacao}
-    return results
-
+    filmes = load(open('filmes.json', "r"))
+    for filme in filmes:
+        if filme.get('id') == filme_id:
+            avaliacoes = load(open('avaliacoes.json', "r")) #carrega as avaliações
+            nova_avaliacao = {} #cria um dicionário para a nova avaliação
+            quantidade_id = load(open('id_avaliacoes.json', "r"))
+            nova_avaliacao['id'] = quantidade_id + 1 #adiciona o id da nova avaliação
+            nova_avaliacao.update(avaliacao) #adiciona os dados da avaliação
+            avaliacoes.append(nova_avaliacao) #adiciona a nova avaliação ao dicionário de avaliações
+            dump(quantidade_id + 1, open('id_avaliacoes.json', "w")) #atualiza o id das avaliações
+            dump(avaliacoes, open('avaliacoes.json', "w", encoding='utf8'),ensure_ascii = False, indent = 2) #atualiza o arquivo de avaliações
+            avaliacoes = load(open('filmes.json', 'r')) #carrega o arquivo de avaliações
+            return avaliacoes #retorna o arquivo de avaliações        
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="O filme não existe para ser avaliado!")
+    
 # o usuario pode listar as avaliações de filmes
 @app.get("/filmes/{filme_id}/avaliacao")
 async def read_avaliacao(filme_id: int):

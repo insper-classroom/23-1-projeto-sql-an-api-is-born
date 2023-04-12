@@ -1,26 +1,38 @@
 [
-    {
-        "id": 1,
-        "avaliacao": 8.5,
-        "comentario": "Excelente filme",
-        "filme_id": 1
-    },
-    {
-        "id": 2,
-        "avaliacao": 9.0,
-        "comentario": "Ótimo filme",
-        "filme_id": 2
-    },
-    {
-        "id": 3,
-        "avaliacao": 7.5,
-        "comentario": "Bom filme",
-        "filme_id": 3
-    },
-    {
-        "id": 4,
-        "avaliacao": 8.0,
-        "comentario": "Bom filme",
-        "filme_id": 1
-    } 
+  {
+    "id": 1,
+    "avaliacao": 8.5,
+    "comentario": "Excelente filme",
+    "filme_id": 1
+  },
+  {
+    "id": 2,
+    "avaliacao": 9.0,
+    "comentario": "Ótimo filme",
+    "filme_id": 2
+  },
+  {
+    "id": 3,
+    "avaliacao": 7.5,
+    "comentario": "Bom filme",
+    "filme_id": 3
+  },
+  {
+    "id": 4,
+    "avaliacao": 8.0,
+    "comentario": "Bom filme",
+    "filme_id": 1
+  },
+  {
+    "id": 5,
+    "avaliacao": 9.7,
+    "comentario": "Um filme bacana d+",
+    "filme_id": 2
+  },
+  {
+    "id": 7,
+    "avaliacao": 2.0,
+    "comentario": "string",
+    "filme_id": 3
+  }
 ]
