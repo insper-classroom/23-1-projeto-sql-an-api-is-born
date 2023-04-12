@@ -18,7 +18,7 @@ class Filme(BaseModel):
     nome: str = Field(
         description="O nome do filme", max_length=100
     )
-    diretor: str | None = Field(
+    diretor: str = Field(
         default=None, description="O nome do diretor do filme", max_length=100
     )
     ano_lancamento : int = Field(
@@ -31,7 +31,7 @@ class Filme(BaseModel):
 #cria uma classe de avaliacoes de filmes de 0.0 a 10.0, um campo de texto livre e o id do filme
 class Avaliacao(BaseModel):
     avaliacao: Annotated[float, Field(gt=0, lt=10)]
-    comentario: str | None = Field(
+    comentario: str = Field(
         default=None, description="Comentário sobre o filme", max_length=300
     )
     filme_id: int = Field(
