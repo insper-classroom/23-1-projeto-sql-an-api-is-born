@@ -6,12 +6,6 @@
     "filme_id": 1
   },
   {
-    "id": 2,
-    "avaliacao": 9.0,
-    "comentario": "\u00d3timo filme",
-    "filme_id": 2
-  },
-  {
     "id": 3,
     "avaliacao": 7.5,
     "comentario": "Bom filme",
