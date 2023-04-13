@@ -47,5 +47,12 @@
     "diretor": "é",
     "ano_lancamento": 2003,
     "genero": "excêntrico"
+  },
+  {
+    "id": 9,
+    "nome": "string4",
+    "diretor": "string",
+    "ano_lancamento": 0,
+    "genero": "string"
   }
 ]
