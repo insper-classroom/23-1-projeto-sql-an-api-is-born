@@ -49,7 +49,7 @@ class Avaliacao_Update(BaseModel):
         default = None, description = "Comentário sobre o filme", max_length = 300
     )
     
-@app.post("/filmes/{filme_id}")
+@app.post("/filme")
 async def create_filme(filme: Filme):
     """ Criação de novos filmes para adicionar ao banco de dados, não sendo possível a criação de dois filmes com 
 mesmo nome e ano de lançamento, cria o id automaticamente, devido ao 'id.json' que guarda o último id criado. A 
@@ -135,7 +135,6 @@ async def create_avaliacao(avaliacao: Avaliacao):
     filmes = load(open('filmes.json', "r")) 
     for filme in filmes: 
         if filme['id'] == avaliacao['filme_id']: 
-
             avaliacoes = load(open('avaliacoes.json', "r")) 
             quantidade_id = load(open('id_avaliacoes.json', "r"))
             
@@ -198,3 +197,10 @@ async def delete_avaliacao(avaliacao_id: int):
             return "A avaliação foi deletada." 
     
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Não foi achadada a avaliação para ser deletada.") 
+
+@app.get("/avaliacoes")
+async def all_avaliacoes():
+    """ Retorna todos as avaliações existentes no banco de dados. """
+
+    avaliacoes = load(open('avaliacoes.json', "r"))
+    return avaliacoes
