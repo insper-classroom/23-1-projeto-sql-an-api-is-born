@@ -40,6 +40,14 @@ class Avaliacao(BaseModel):
     filme_id: int = Field(
         description = "O id do filme interligado ao modelo Filme criado anteriormente."
     )
+
+class Avaliacao_Update(BaseModel):
+    """ Utilizado para poder fazer o update da avaliação sem alterar os id's dos filmes. """
+
+    avaliacao: Annotated[float, Field(gt=0, lt=10)]
+    comentario: str = Field(
+        default = None, description = "Comentário sobre o filme", max_length = 300
+    )
     
 @app.post("/filmes/{filme_id}")
 async def create_filme(filme: Filme):
@@ -61,11 +69,9 @@ função também deve adicionar o filme criado no fim do 'filmes.json'."""
     filmes.append(new_filme)
 
     dump(quantidade_id + 1, open('id.json', "w"))
-    dump(filmes, open('filmes.json', "w", encoding = 'utf8'),ensure_ascii = False, indent = 2)
+    dump(filmes, open('filmes.json', "w", encoding = 'utf8'), ensure_ascii = False, indent = 2)
     
-    filmes = load(open('filmes.json', 'r'))
-    
-    return filmes
+    return "O filme foi adicionado ao banco!"
 
 @app.get("/filmes")
 async def all_filmes():
@@ -100,7 +106,7 @@ deleta todas as avaliações ligadas a ele no banco de dados. """
                 if avaliacao.get('id') == filme_id:
                     avaliacoes.remove(avaliacao)
     
-            return {"STATUS": "OK", "Filmes": filmes, "Avaliações": avaliacoes}
+            return "O filme foi deletado do banco!"
     raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail = "Não foi achado o item para ser deletado.")
 
 @app.put("/filmes/{filme_id}")
@@ -117,17 +123,18 @@ async def update_filme(filme_id: int, filme: Filme):
             film['genero'] = filme['genero']
             dump(filmes, open('filmes.json', "w", encoding='utf8'), indent = 2)
             filmes_alterados = load(open('filmes.json', "r"))
-            return filmes_alterados
+            return "O filme teve seus dados atualizados."
+        
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Não foi achado o item para ser alterado.")
 
-# usuário pode gerenciar cadastro de avaliações de filmes
-@app.post("/filmes/{filme_id}/avaliacao")
-async def create_avaliacao(filme_id: int, avaliacao: Avaliacao):
-    """ Cria uma avaliação para um filme pertecente ao modelo Filme."""
+@app.post("/avaliacao")
+async def create_avaliacao(avaliacao: Avaliacao):
+    """ Usuário pode gerenciar cadastro de avaliações de filmes. """
 
-    filmes = load(open('filmes.json', "r"))
-    for filme in filmes:
-        if filme.get('id') == filme_id:
+    avaliacao = avaliacao.dict()
+    filmes = load(open('filmes.json', "r")) 
+    for filme in filmes: 
+        if filme['id'] == avaliacao['filme_id']: 
 
             avaliacoes = load(open('avaliacoes.json', "r")) 
             quantidade_id = load(open('id_avaliacoes.json', "r"))
@@ -140,10 +147,9 @@ async def create_avaliacao(filme_id: int, avaliacao: Avaliacao):
             dump(quantidade_id + 1, open('id_avaliacoes.json', "w")) 
             dump(avaliacoes, open('avaliacoes.json', "w", encoding='utf8'),ensure_ascii = False, indent = 2) 
             avaliacoes = load(open('filmes.json', 'r')) 
-            
-            return avaliacoes
-                
-    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="O filme não existe para ser avaliado!")
+            return "A avaliação foi adicionada ao banco!"
+    
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="O filme não existe na base!") 
     
 @app.get("/filmes/{filme_id}/avaliacao")
 async def read_avaliacao(filme_id: int):
@@ -162,12 +168,10 @@ async def read_avaliacao(filme_id: int):
             return avaliacoes_filme 
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="O filme não existe na base!") 
 
-
-# o usuario pode alterar os a avaliação de um filme
 @app.put("/avaliacao/{avaliacao_id}")
-async def update_avaliacao(avaliacao_id: int, avaliacao: Avaliacao):
+async def update_avaliacao(avaliacao_id: int, avaliacao: Avaliacao_Update):
     """ Permite ao usuário alterar a nota e o comentário feito em alguma avaliação. """
-    
+
     avaliacoes = load(open('avaliacoes.json', "r"))  
     for avali in avaliacoes: 
         if avali.get('id') == avaliacao_id: 
@@ -176,24 +180,21 @@ async def update_avaliacao(avaliacao_id: int, avaliacao: Avaliacao):
             avali['comentario'] = avaliacao['comentario'] 
             
             dump(avaliacoes, open('avaliacoes.json', "w", encoding='utf8'), indent = 2) 
-            avaliacoes_alteradas = load(open('avaliacoes.json', "r")) 
             
-            return avaliacoes_alteradas 
+            return "A avaliação foi atualizada no banco de dados." 
     
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Não foi achadada a avaliação para ser alterada.")
 
-# o usuario pode deletar uma avaliação de um filme
-@app.delete("/filmes/{filme_id}/avaliacao/{avaliacao_id}")
-async def delete_avaliacao(filme_id: int, avaliacao_id: int):
-    filmes = load(open('filmes.json', "r")) #carrega os filmes
-    for film in filmes: #percorre os filmes
-        if film.get('id') == filme_id: #verifica se o id do filme é igual ao id do filme passado
-            avaliacoes = load(open('avaliacoes.json', "r")) #carrega as avaliações
-            for avali in avaliacoes:  #percorre as avaliações
-                if avali.get('id') == avaliacao_id: #verifica se o id da avaliação é igual ao id da avaliação passada
-                    avaliacoes.remove(avali) #remove a avaliação
-                    dump(avaliacoes, open('avaliacoes.json', "w", encoding='utf8'), indent = 2) #atualiza o arquivo de avaliações
-                    avaliacoes_alteradas = load(open('avaliacoes.json', "r")) #carrega o arquivo de avaliações
-                    return avaliacoes_alteradas #retorna o arquivo de avaliações
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Não foi achadada a avaliação para ser deletada.") 
-    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Não foi achado o filme.")
+@app.delete("/avaliacao/{avaliacao_id}")
+async def delete_avaliacao(avaliacao_id: int):
+    """ O usuário pode deletar uma avaliação de um filme. """
+
+    avaliacoes = load(open('avaliacoes.json', "r")) 
+    for avali in avaliacoes:  
+        if avali.get('id') == avaliacao_id: 
+            avaliacoes.remove(avali) 
+            dump(avaliacoes, open('avaliacoes.json', "w", encoding='utf8'), indent = 2)
+            
+            return "A avaliação foi deletada." 
+    
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Não foi achadada a avaliação para ser deletada.") 

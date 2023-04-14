@@ -6,12 +6,6 @@
     "filme_id": 1
   },
   {
-    "id": 3,
-    "avaliacao": 7.5,
-    "comentario": "Bom filme",
-    "filme_id": 3
-  },
-  {
     "id": 4,
     "avaliacao": 8.0,
     "comentario": "Bom filme",
@@ -28,5 +22,23 @@
     "avaliacao": 2.0,
     "comentario": "string",
     "filme_id": 3
+  },
+  {
+    "id": 8,
+    "avaliacao": 2.0,
+    "comentario": "stringlallala",
+    "filme_id": 2
+  },
+  {
+    "id": 9,
+    "avaliacao": 2.0,
+    "comentario": "string",
+    "filme_id": 9
+  },
+  {
+    "id": 11,
+    "avaliacao": 3.0,
+    "comentario": "Muito ruim d+!",
+    "filme_id": 9
   }
 ]
