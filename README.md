@@ -1,6 +1,8 @@
 # API de Filmes e Avaliações
 ### Essa é uma API criada com o FastAPI para gerenciar filmes e suas avaliações. 
 
+### O vídeo descrevendo e demonstrando as funcionalidades da API pode ser acessado aqui: https://youtu.be/n9Ev8t0KOdo .
+-------------------------------------------------
 ## A API possui os seguintes endpoints:
 
 POST /filme
