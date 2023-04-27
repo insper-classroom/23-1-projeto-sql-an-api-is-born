@@ -33,8 +33,7 @@ quantidade_id = load(open('id.json', "r"))
 @app.post("/filme", response_model= schemas.Filme)
 async def create_filme(filme: schemas.FilmeCreate, db: Session = Depends(get_db)):
     """ Criação de novos filmes para adicionar ao banco de dados, não sendo possível a criação de dois filmes com 
-mesmo nome e ano de lançamento, cria o id automaticamente, devido ao 'id.json' que guarda o último id criado. A 
-função também deve adicionar o filme criado no fim do 'filmes.json'."""
+    o mesmo nome e ano de lançamento. """
     
     db_filme = crud.get_filme_by_nome(db, nome=filme.nome)
     #se o filme já existir, verifica se o ano de lançamento é o mesmo
@@ -61,101 +60,72 @@ async def read_filme(filme_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail = "Filme não encontrado.")
     return db_filme
 
-
-
-
-@app.put("/filmes/{filme_id}")
+# update de filme
+@app.put("/filmes/{filme_id}", response_model= schemas.Filme)
 async def update_filme(filme_id: int, filme: schemas.FilmeUpdate, db: Session = Depends(get_db)):
     """ O usuário pode alterar os dados de um filme, checando se realmente o filme existe para dar o update. """
+    
+    db_filme = crud.get_filme(db, filme_id=filme_id)
+    if db_filme is None:
+        raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail = "Filme não encontrado.")
+    return crud.update_filme(db=db, filme=filme, filme_id=filme_id)
 
-    filmes = load(open('filmes.json', "r"))
-    for film in filmes:
-        if film.get('id') == filme_id:
-            filme = filme.dict()
-            film['nome'] = filme['nome']
-            film['diretor'] = filme['diretor']
-            film['ano_lancamento'] = filme['ano_lancamento']
-            film['genero'] = filme['genero']
-            dump(filmes, open('filmes.json', "w", encoding='utf8'), indent = 2)
-            filmes_alterados = load(open('filmes.json', "r"))
-            return "O filme teve seus dados atualizados."
-        
-    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Não foi achado o item para ser alterado.")
+# delete de filme  (colocar on delete cascade para deletar as avaliações do filme)
+@app.delete("/filmes/{filme_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_filme(filme_id: int, db: Session = Depends(get_db)):
+    """ O usuário pode deletar um filme, checando se realmente o filme existe para dar o delete. """
 
-@app.post("/avaliacao")
+    db_filme = crud.get_filme(db, filme_id=filme_id)
+    if db_filme is None:
+        raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail = "Filme não encontrado.")
+    return crud.delete_filme(db=db, filme_id=filme_id)
+
+# criar avaliação
+@app.post("/avaliacao", response_model= schemas.Avaliacao)
 async def create_avaliacao(avaliacao: schemas.AvaliacaoCreate, db: Session = Depends(get_db)):
-    """ Usuário pode gerenciar cadastro de avaliações de filmes. """
-
-    avaliacao = avaliacao.dict()
-    filmes = load(open('filmes.json', "r")) 
-    for filme in filmes: 
-        if filme['id'] == avaliacao['filme_id']: 
-            avaliacoes = load(open('avaliacoes.json', "r")) 
-            quantidade_id = load(open('id_avaliacoes.json', "r"))
-            
-            nova_avaliacao = {} 
-            nova_avaliacao['id'] = quantidade_id + 1 
-            nova_avaliacao.update(avaliacao) 
-            avaliacoes.append(nova_avaliacao) 
-            
-            dump(quantidade_id + 1, open('id_avaliacoes.json', "w")) 
-            dump(avaliacoes, open('avaliacoes.json', "w", encoding='utf8'),ensure_ascii = False, indent = 2) 
-            avaliacoes = load(open('filmes.json', 'r')) 
-            return "A avaliação foi adicionada ao banco!"
+    """ Usuário pode criar uma avaliação para um filme, sendo que o filme deve existir no banco de dados. """
     
-    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="O filme não existe na base!") 
+    db_filme = crud.get_filme(db, filme_id=avaliacao.filme_id)
+    if db_filme is None:
+        raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail = "Filme não encontrado.")
+    return crud.create_avaliacao(db=db, avaliacao=avaliacao)
     
-@app.get("/filmes/{filme_id}/avaliacao")
-async def read_avaliacao(filme_id: int):
-    """ Retorna todas as avaliacoes de um filme com o id especificado (pode ter mais de uma avaliação). """ 
+# ler avaliação
+@app.get("/filmes/{filme_id}/avaliacao", response_model= list[schemas.Avaliacao])
+async def read_avaliacao(filme_id: int, db: Session = Depends(get_db)):
+   """Retorna as avaliações de um filme, recebendo o id do filme como argumento. As avaliações vem do banco de dados, não do json"""
+   db_filme = crud.get_filme(db, filme_id=filme_id)
+   if db_filme is None:
+        raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail = "Filme não encontrado.")
+   return crud.get_avaliacoes_filme(db, filme_id=filme_id)
 
-    filmes = load(open('filmes.json', "r")) 
-    for filme in filmes: 
-        if filme.get('id') == filme_id: 
-            avaliacoes = load(open('avaliacoes.json', "r")) 
-            avaliacoes_filme = [] 
-
-            for avaliacao in avaliacoes: 
-                if avaliacao.get('filme_id') == filme_id: 
-                    avaliacoes_filme.append(avaliacao) 
-            
-            return avaliacoes_filme 
-    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="O filme não existe na base!") 
-
-@app.put("/avaliacao/{avaliacao_id}")
+    
+# update de avaliação
+@app.put("/avaliacao/{avaliacao_id}", response_model= schemas.Avaliacao)
 async def update_avaliacao(avaliacao_id: int, avaliacao: schemas.AvaliacaoUpdate, db: Session = Depends(get_db)):
     """ Permite ao usuário alterar a nota e o comentário feito em alguma avaliação. """
 
-    avaliacoes = load(open('avaliacoes.json', "r"))  
-    for avali in avaliacoes: 
-        if avali.get('id') == avaliacao_id: 
-            avaliacao = avaliacao.dict() 
-            avali['avaliacao'] = avaliacao['avaliacao'] 
-            avali['comentario'] = avaliacao['comentario'] 
-            
-            dump(avaliacoes, open('avaliacoes.json', "w", encoding='utf8'), indent = 2) 
-            
-            return "A avaliação foi atualizada no banco de dados." 
-    
-    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Não foi achadada a avaliação para ser alterada.")
+    db_avaliacao = crud.get_avaliacao(db, avaliacao_id=avaliacao_id)
+    if db_avaliacao is None:
+        raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail = "Avaliação não encontrada.")
+    return crud.update_avaliacao(db=db, avaliacao=avaliacao, avaliacao_id=avaliacao_id)
 
-@app.delete("/avaliacao/{avaliacao_id}")
-async def delete_avaliacao(avaliacao_id: int):
+# delete de avaliação
+@app.delete("/avaliacao/{avaliacao_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_avaliacao(avaliacao_id: int, db: Session = Depends(get_db)):
     """ O usuário pode deletar uma avaliação de um filme. """
 
-    avaliacoes = load(open('avaliacoes.json', "r")) 
-    for avali in avaliacoes:  
-        if avali.get('id') == avaliacao_id: 
-            avaliacoes.remove(avali) 
-            dump(avaliacoes, open('avaliacoes.json', "w", encoding='utf8'), indent = 2)
-            
-            return "A avaliação foi deletada." 
-    
-    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Não foi achadada a avaliação para ser deletada.") 
+    db_avaliacao = crud.get_avaliacao(db, avaliacao_id=avaliacao_id)
+    if db_avaliacao is None:
+        raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail = "Avaliação não encontrada.")
+    return crud.delete_avaliacao(db=db, avaliacao_id=avaliacao_id)
 
-@app.get("/avaliacoes")
-async def all_avaliacoes():
-    """ Retorna todos as avaliações existentes no banco de dados. """
 
-    avaliacoes = load(open('avaliacoes.json', "r"))
+# listar todas as avaliações (skip e limit opcionais passados como argumentos na url)
+@app.get("/avaliacoes", response_model= list[schemas.Avaliacao])
+async def all_avaliacoes(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    """ Retorna todas as avaliações existentes no banco de dados. """
+
+    avaliacoes = crud.get_avaliacoes(db, skip=skip, limit=limit)
     return avaliacoes
+   
