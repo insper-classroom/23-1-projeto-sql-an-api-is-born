@@ -13,7 +13,7 @@ class AvaliacaoBase(BaseModel):
 class AvaliacaoCreate(AvaliacaoBase):
     pass
 
-class AvaliacaoUpdate(AvaliacaoBase):
+class AvaliacaoUpdate(BaseModel):
     avaliacao: Annotated[int, Field(gt=-1, lt=6)]
     comentario: str = Field(
         default = None, description = "Comentário sobre o filme", max_length = 300

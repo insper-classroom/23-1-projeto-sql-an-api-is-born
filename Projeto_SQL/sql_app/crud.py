@@ -46,37 +46,39 @@ def delete_filme(db: Session, filme_id: int):
     db.commit()
     return db_filme
 
-#criar uma nova avaliação
 def create_avaliacao(db: Session, avaliacao: schemas.AvaliacaoCreate):
+    """ Usuário pode criar uma avaliação para um filme, sendo que o filme deve existir no banco de dados. """
     db_avaliacao = models.Avaliacao(avaliacao=avaliacao.avaliacao, comentario=avaliacao.comentario, filme_id=avaliacao.filme_id)
     db.add(db_avaliacao)
     db.commit()
     db.refresh(db_avaliacao)
     return db_avaliacao
 
-#retornar uma avaliação pelo id
 def get_avaliacao(db: Session, avaliacao_id: int):
+    """ Retorna uma avaliação pelo seu id. """
     return db.query(models.Avaliacao).filter(models.Avaliacao.id == avaliacao_id).first()
 
-#retornar todas as avaliações de um filme
 def get_avaliacoes_filme(db: Session, filme_id: int):
+    """Retorna as avaliações de um filme, recebendo o id do filme como argumento. As avaliações vem do banco de dados, não do json"""
     return db.query(models.Avaliacao).filter(models.Avaliacao.filme_id == filme_id).all()
 
-#retornar todas as avaliações
 def get_avaliacoes(db: Session, skip: int = 0, limit: int = 100):
+    """ Retorna todas as avaliações existentes no banco de dados. """
     return db.query(models.Avaliacao).offset(skip).limit(limit).all()
 
-#atualizar uma avaliação
-def update_avaliacao(db: Session, avaliacao_id: int, avaliacao: schemas.AvaliacaoCreate):
-    db_avaliacao = db.query(models.Avaliacao).filter(models.Avaliacao.id == avaliacao_id).first()
+def update_avaliacao(db: Session, avaliacao_id: int, avaliacao: schemas.AvaliacaoUpdate):
+    """ O usuário pode alterar os dados de uma avaliação de um filme. """
+
+    db_avaliacao = get_avaliacao(db, avaliacao_id = avaliacao_id)
     db_avaliacao.avaliacao = avaliacao.avaliacao
     db_avaliacao.comentario = avaliacao.comentario
     db.commit()
     db.refresh(db_avaliacao)
     return db_avaliacao
 
-#deletar uma avaliação
 def delete_avaliacao(db: Session, avaliacao_id: int):
+    """ O usuário pode deletar uma avaliação de um filme. """
+    
     db_avaliacao = db.query(models.Avaliacao).filter(models.Avaliacao.id == avaliacao_id).first()
     db.delete(db_avaliacao)
     db.commit()
