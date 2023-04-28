@@ -54,9 +54,6 @@ class Filme(FilmeBase):
     id : int = Field(
         description = "O id do filme, criado automaticamente."
     )
-    avaliacoes: list[Avaliacao] = Field(
-        default = None, description = "Lista de avaliações do filme."
-    )
     
     class Config:
         orm_mode = True
