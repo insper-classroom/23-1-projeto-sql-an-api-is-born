@@ -20,7 +20,9 @@ def get_db():
 
 @app.post("/filme", response_model= schemas.Filme, tags=["Filme"])
 async def create_filme(filme: schemas.FilmeCreate, db: Session = Depends(get_db)):
-    
+    """ Criação de novos filmes para adicionar ao banco de dados, não sendo possível a criação de dois filmes com 
+    o mesmo nome e ano de lançamento. """
+
     db_filme = crud.create_filme(db, filme)
     if db_filme == True:
         raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail = "Filme já existe no banco de dados.")
@@ -29,12 +31,14 @@ async def create_filme(filme: schemas.FilmeCreate, db: Session = Depends(get_db)
 
 @app.get("/filmes", response_model= list[schemas.Filme], tags=["Filme"])
 async def all_filmes(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    """ Retorna todos os filmes existentes no banco de dados. """
 
     filmes = crud.get_filmes(db, skip=skip, limit=limit)
     return filmes
 
 @app.get("/filmes/{filme_id}", response_model= schemas.Filme, tags=["Filme"])
 async def read_filme(filme_id: int, db: Session = Depends(get_db)):
+    """ Retorna o filme, recebendo o id especificado como argumento, com todos os dados do filme. """
 
     db_filme = crud.get_filme(db, filme_id=filme_id)
     if db_filme is None:
@@ -43,6 +47,7 @@ async def read_filme(filme_id: int, db: Session = Depends(get_db)):
 
 @app.put("/filmes/{filme_id}", response_model= schemas.Filme, tags=["Filme"])
 async def update_filme(filme_id: int, filme: schemas.FilmeUpdate, db: Session = Depends(get_db)):
+    """ O usuário pode alterar os dados de um filme, checando se realmente o filme existe para dar o update. """
 
     db_filme = crud.get_filme(db, filme_id=filme_id)
     if db_filme is None:
@@ -51,6 +56,7 @@ async def update_filme(filme_id: int, filme: schemas.FilmeUpdate, db: Session = 
 
 @app.delete("/filmes/{filme_id}", status_code=status.HTTP_204_NO_CONTENT, tags=["Filme"])
 async def delete_filme(filme_id: int, db: Session = Depends(get_db)):
+    """ O usuário pode deletar um filme, checando se realmente o filme existe para dar o delete. """
 
     db_filme = crud.get_filme(db, filme_id=filme_id)
     if db_filme is None:
@@ -59,7 +65,8 @@ async def delete_filme(filme_id: int, db: Session = Depends(get_db)):
 
 @app.post("/avaliacao", response_model= schemas.Avaliacao, tags=["Avaliação"])
 async def create_avaliacao(avaliacao: schemas.AvaliacaoCreate, db: Session = Depends(get_db)):
-    
+    """ Usuário pode criar uma avaliação para um filme, sendo que o filme deve existir no banco de dados. """
+
     db_filme = crud.get_filme(db, filme_id=avaliacao.filme_id)
     if db_filme is None:
         raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail = "Filme não encontrado.")
@@ -67,6 +74,7 @@ async def create_avaliacao(avaliacao: schemas.AvaliacaoCreate, db: Session = Dep
     
 @app.get("/filmes/{filme_id}/avaliacao", response_model= list[schemas.Avaliacao], tags=["Avaliação"])
 async def read_avaliacao(filme_id: int, db: Session = Depends(get_db)):
+   """ Retorna uma avaliação pelo seu id. """
 
    db_filme = crud.get_filme(db, filme_id=filme_id)
    if db_filme is None:
@@ -75,6 +83,7 @@ async def read_avaliacao(filme_id: int, db: Session = Depends(get_db)):
   
 @app.put("/avaliacao/{avaliacao_id}", response_model= schemas.Avaliacao, tags=["Avaliação"])
 async def update_avaliacao(avaliacao_id: int, avaliacao: schemas.AvaliacaoUpdate, db: Session = Depends(get_db)):
+    """ O usuário pode alterar os dados de uma avaliação de um filme. """
 
     db_avaliacao = crud.get_avaliacao(db, avaliacao_id=avaliacao_id)
     if db_avaliacao is None:
@@ -83,6 +92,7 @@ async def update_avaliacao(avaliacao_id: int, avaliacao: schemas.AvaliacaoUpdate
 
 @app.delete("/avaliacao/{avaliacao_id}", status_code=status.HTTP_204_NO_CONTENT, tags=["Avaliação"])
 async def delete_avaliacao(avaliacao_id: int, db: Session = Depends(get_db)):
+    """ O usuário pode deletar uma avaliação de um filme. """
 
     db_avaliacao = crud.get_avaliacao(db, avaliacao_id=avaliacao_id)
     if db_avaliacao is None:
@@ -91,6 +101,7 @@ async def delete_avaliacao(avaliacao_id: int, db: Session = Depends(get_db)):
 
 @app.get("/avaliacoes", response_model= list[schemas.Avaliacao], tags=["Avaliação"])
 async def all_avaliacoes(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    """ Retorna todas as avaliações existentes no banco de dados. """
 
     avaliacoes = crud.get_avaliacoes(db, skip=skip, limit=limit)
     return avaliacoes
