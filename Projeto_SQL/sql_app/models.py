@@ -12,8 +12,6 @@ class Filme(Base):
     ano_lancamento = Column(Integer, index=True)
     genero = Column(String(50), index=True)
 
-    # avaliacoes = relationship("Avaliacao", back_populates="Filme")
-
 class Avaliacao(Base):
     __tablename__ = "Avaliacao"
 
@@ -21,6 +19,4 @@ class Avaliacao(Base):
     avaliacao = Column(Integer, index=True)
     comentario = Column(String(300), index=True)
     filme_id = Column(Integer, ForeignKey("Filme.id"))
-
-    # filme = relationship("Filme", back_populates="Avaliacao")
 
