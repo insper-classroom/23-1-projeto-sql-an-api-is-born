@@ -4,7 +4,7 @@
 ### O diagrama ER do projeto está abaixo:
 ![Imagem do WhatsApp de 2023-04-28 à(s) 18 11 10](https://user-images.githubusercontent.com/72052521/235273891-855c2d17-463e-4368-9c68-f6553cc3a537.jpg)
 
-### O vídeo descrevendo e demonstrando as atualizações do handout 02 na API pode ser acessado aqui:
+### O vídeo descrevendo e demonstrando as atualizações do handout 02 na API pode ser acessado aqui:https://youtu.be/mJt3WxHqSoI
 
 ### O vídeo (parte 1 do projeto) descrevendo e demonstrando as funcionalidades da API pode ser acessado aqui: https://youtu.be/n9Ev8t0KOdo .
 -------------------------------------------------
