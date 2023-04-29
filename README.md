@@ -26,8 +26,6 @@ uvicorn sql_app.main:app --reload
 POST /filme
 - Cria um novo filme no banco de dados.
 - Não é possível criar dois filmes com o mesmo nome e ano de lançamento.
-- O ID do filme é gerado automaticamente, com base no último ID registrado.
-- Os dados do filme são salvos no arquivo filmes.json.
 
 GET /filmes
 - Retorna todos os filmes existentes no banco de dados.
