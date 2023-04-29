@@ -1,7 +1,25 @@
 # API de Filmes e Avaliações
 ### Essa é uma API criada com o FastAPI para gerenciar filmes e suas avaliações. 
 
-### O vídeo descrevendo e demonstrando as funcionalidades da API pode ser acessado aqui: https://youtu.be/n9Ev8t0KOdo .
+### O diagrama ER do projeto está abaixo:
+![Imagem do WhatsApp de 2023-04-28 à(s) 18 11 10](https://user-images.githubusercontent.com/72052521/235273891-855c2d17-463e-4368-9c68-f6553cc3a537.jpg)
+
+### O vídeo descrevendo e demonstrando as atualizações do handout 02 na API pode ser acessado aqui:
+
+### O vídeo (parte 1 do projeto) descrevendo e demonstrando as funcionalidades da API pode ser acessado aqui: https://youtu.be/n9Ev8t0KOdo .
+-------------------------------------------------
+## Como rodar o projeto?
+- Clone o repositório localmente.
+- Rode o scrip "cria_banco.sql".
+- No mesmo nível do arquivo "cria_banco.sql", crie um arquivo ".env" com seguinte conteúdo:
+```python
+database_url = mysql+mysqlconnector://{user}:{password}@localhost:3306/sql_app
+```
+- Subistitua **{user}** e **{password}** por suas credencias de conexão. 
+- Finalmente, rode o comando abaixo no terminal:
+```python
+uvicorn sql_app.main:app --reload
+```
 -------------------------------------------------
 ## A API possui os seguintes endpoints:
 
